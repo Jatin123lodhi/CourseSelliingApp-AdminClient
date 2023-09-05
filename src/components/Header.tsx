@@ -47,7 +47,7 @@ const Header = () => {
 
       {/* web view */}
       <div className="hidden  sm:flex gap-2 items-center">
-        {userEmail ? (
+        {userEmail || localStorage.getItem("token") ? (
           <>
             <Link to={"/courses"}>
               <Button variant="outlined">Courses</Button>

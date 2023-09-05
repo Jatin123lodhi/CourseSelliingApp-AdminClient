@@ -8,6 +8,7 @@ import { BiEdit as EditIcon } from "react-icons/bi";
 import axios from "axios";
 import { useState } from "react";
 import { ICourseDetails } from "../CourseDetails";
+import { useToasts } from "../../toasts/useToasts";
 
 interface IUpdateCourseDialogProps{
   course: ICourseDetails
@@ -22,6 +23,9 @@ export default function UpdateCourseDialog(props:IUpdateCourseDialogProps) {
   const [imageLink, setImageLink] = useState(course?.imageLink);
   const [price, setPrice] = useState<number>(course?.price);
   const [open, setOpen] = useState(false);
+
+  //hooks
+  const {successToast} = useToasts()
 
   //functions
   const handleClickOpen = () => {
@@ -50,7 +54,7 @@ export default function UpdateCourseDialog(props:IUpdateCourseDialogProps) {
           },
         }
       );
-
+      successToast('Course updated!')
       console.log(res?.data);
       setOpen(false);
       onCourseUpdateSuccess();

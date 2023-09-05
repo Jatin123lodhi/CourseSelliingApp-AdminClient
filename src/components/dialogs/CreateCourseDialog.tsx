@@ -6,6 +6,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { useState } from "react";
 import axios from "axios";
+import { useToasts } from "../../toasts/useToasts";
 
 interface ICreateCourseDialogProps {
   isOpenCreateCourseDialog: boolean;
@@ -15,6 +16,9 @@ interface ICreateCourseDialogProps {
 export default function CreateCourseDialog(props: ICreateCourseDialogProps) {
   //props
   const { isOpenCreateCourseDialog, setOpen } = props;
+
+  //hooks
+  const {successToast,errorToast} = useToasts()
 
   //states
   const [title, setTitle] = useState("");
@@ -46,9 +50,11 @@ export default function CreateCourseDialog(props: ICreateCourseDialogProps) {
       );
 
       console.log(res?.data);
+      successToast('Course created!')
       setOpen();
     } catch (err) {
       console.log(err);
+      errorToast(`Something went wrong ${err}`)
     }
   };
 

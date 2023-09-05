@@ -10,7 +10,10 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { BASE_URL } from "./utils/Constants";
 import { useEffect } from "react";
 import { userState } from "./store/atoms/user.ts";
-import axios from "axios"
+import axios from "axios";
+import { ToastContainer } from "react-toastify";
+import PrivateRoute from "./routes/PrivateRoute.tsx";
+
 function App() {
   return (
     <div>
@@ -22,9 +25,12 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/signin" element={<Signin />} />
-            <Route path="/course/:courseId" element={<CourseDetails />} />
-            <Route path="/courses" element={<Courses />} />
+            
+            {/* private routes */}
+            <Route path="/course/:courseId" element={<PrivateRoute><CourseDetails /></PrivateRoute>} />
+            <Route path="/courses" element={<PrivateRoute><Courses /></PrivateRoute>} />
           </Routes>
+          <ToastContainer />
         </Router>
       </RecoilRoot>
     </div>
@@ -32,7 +38,10 @@ function App() {
 }
 
 const InitUser = () => {
+  //state
   const setUser = useSetRecoilState(userState);
+
+  //function
   const init = async () => {
     try {
       const res = await axios.get(`${BASE_URL}/admin/me`, {
@@ -63,6 +72,7 @@ const InitUser = () => {
 
   useEffect(() => {
     init();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return <></>;

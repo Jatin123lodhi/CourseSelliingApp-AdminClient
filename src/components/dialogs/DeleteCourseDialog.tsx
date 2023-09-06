@@ -4,11 +4,11 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-import axios from "axios";
 import { AiFillDelete as DeleteIcon } from "react-icons/ai";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToasts } from "../../toasts/useToasts";
+import { useCourseAPI } from "../../services/useCourseAPI";
 
 interface IDeleteCourseDialogProps{
   courseId: string
@@ -24,6 +24,7 @@ export default function DeleteCourseDialog(props:IDeleteCourseDialogProps) {
   //hooks
   const navigate = useNavigate();
   const {successToast,errorToast} = useToasts()
+  const {deleteCourse} = useCourseAPI()
 
   //functions
   const handleClickOpen = () => {
@@ -36,14 +37,7 @@ export default function DeleteCourseDialog(props:IDeleteCourseDialogProps) {
 
   const handleDelete = async () => {
     try {
-      const res = await axios.delete(
-        `http://localhost:3001/admin/course/${courseId}`,
-        {
-          headers: {
-            Authorization: "Bearer " + localStorage.getItem("token"),
-          },
-        }
-      );
+      const res = await deleteCourse(courseId);
       console.log(res?.data);
       setOpen(false);
       successToast('Course deleted!')

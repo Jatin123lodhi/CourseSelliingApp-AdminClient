@@ -50,20 +50,7 @@ export default function Sidebar(props: ISidebarProps) {
       onKeyDown={() => setIsOpen(false)}
     >
       <List>
-        {!userEmail ? (
-          <>
-            <ListItem disablePadding>
-              <ListItemButton onClick={() => navigate("/signup")}>
-                <ListItemText primary={"Signup"} style={{padding:"0px 20px"}} />
-              </ListItemButton>
-            </ListItem>
-            <ListItem disablePadding>
-              <ListItemButton onClick={() => navigate("/signin")}>
-                <ListItemText primary={"Signin"} style={{padding:"0px 20px"}} />
-              </ListItemButton>
-            </ListItem>
-          </>
-        ) : (
+        {userEmail || localStorage.getItem("token") ? (
           <>
             <ListItem disablePadding>
               <ListItemButton onClick={() => navigate("/courses")}>
@@ -92,6 +79,19 @@ export default function Sidebar(props: ISidebarProps) {
                   <LogoutIcon />
                 </ListItemIcon>
                 <ListItemText primary={"Logout"} />
+              </ListItemButton>
+            </ListItem>
+          </>
+        ) : (
+          <>
+            <ListItem disablePadding>
+              <ListItemButton onClick={() => navigate("/signup")}>
+                <ListItemText primary={"Signup"} style={{padding:"0px 20px"}} />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemButton onClick={() => navigate("/signin")}>
+                <ListItemText primary={"Signin"} style={{padding:"0px 20px"}} />
               </ListItemButton>
             </ListItem>
           </>

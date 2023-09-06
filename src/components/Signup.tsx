@@ -2,11 +2,11 @@ import { useState } from "react";
 import Button from "@mui/material/Button";
 import { TextField } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { useSetRecoilState } from "recoil";
 import { userState } from "../store/atoms/user";
 import 'react-toastify/dist/ReactToastify.css';
 import { useToasts } from "../toasts/useToasts";
+import { useAuthAPI } from "../services/useAuthAPI";
 
 const Signup = () => {
   //state
@@ -17,17 +17,16 @@ const Signup = () => {
   //hook
   const navigate = useNavigate();
   const {successToast,errorToast} = useToasts()
+  const {adminSignup} = useAuthAPI()
 
   //function
+
   const handleSignup = async () => {
     if (email?.trim()?.length === 0 || password?.trim()?.length === 0)
       return errorToast("Invalid email or password");
     console.log(email, password);
     try {
-      const res = await axios.post("http://localhost:3001/admin/signup", {
-        email: email,
-        password: password,
-      });
+      const res = await adminSignup(email,password);
       localStorage.setItem("token", res?.data.token);
       setEmail("");
       setPassword("");

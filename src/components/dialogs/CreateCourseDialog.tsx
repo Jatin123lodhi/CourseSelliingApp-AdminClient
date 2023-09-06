@@ -5,8 +5,8 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { useState } from "react";
-import axios from "axios";
 import { useToasts } from "../../toasts/useToasts";
+import { ICreateCoursePayload, useCourseAPI } from "../../services/useCourseAPI";
 
 interface ICreateCourseDialogProps {
   isOpenCreateCourseDialog: boolean;
@@ -18,13 +18,14 @@ export default function CreateCourseDialog(props: ICreateCourseDialogProps) {
   const { isOpenCreateCourseDialog, setOpen } = props;
 
   //hooks
-  const {successToast,errorToast} = useToasts()
+  const { successToast, errorToast } = useToasts();
+  const {createCourse} = useCourseAPI()
 
   //states
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [imageLink, setImageLink] = useState("");
-  const [price, setPrice] = useState<number>();
+  const [price, setPrice] = useState<string>("");
 
   //functions
   const handleClose = () => {
@@ -33,28 +34,25 @@ export default function CreateCourseDialog(props: ICreateCourseDialogProps) {
 
   const handleCreateCourse = async () => {
     try {
-      const payload = {
+      const payload:ICreateCoursePayload = {
         title,
         description,
         imageLink,
-        price,
+        price: parseInt(price)
       };
-      const headers = {
-        Authorization: "Bearer " + localStorage.getItem("token"),
-      };
-
-      const res = await axios.post(
-        `http://localhost:3001/admin/courses`,
-        payload,
-        { headers }
-      );
+      
+      const res = await createCourse(payload);
 
       console.log(res?.data);
-      successToast('Course created!')
+      successToast("Course created!");
+      setTitle("");
+      setDescription("");
+      setPrice("");
+      setImageLink("");
       setOpen();
     } catch (err) {
       console.log(err);
-      errorToast(`Something went wrong ${err}`)
+      errorToast(`Something went wrong ${err}`);
     }
   };
 
@@ -95,7 +93,7 @@ export default function CreateCourseDialog(props: ICreateCourseDialogProps) {
           />
           <TextField
             value={price}
-            onChange={(e) => setPrice(parseInt(e.target.value))}
+            onChange={(e) => setPrice(e.target.value)}
             margin="dense"
             label="Price"
             fullWidth

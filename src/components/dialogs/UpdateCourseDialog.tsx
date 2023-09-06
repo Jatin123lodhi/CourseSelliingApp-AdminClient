@@ -5,10 +5,10 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { BiEdit as EditIcon } from "react-icons/bi";
-import axios from "axios";
 import { useState } from "react";
 import { ICourseDetails } from "../CourseDetails";
 import { useToasts } from "../../toasts/useToasts";
+import { useCourseAPI } from "../../services/useCourseAPI";
 
 interface IUpdateCourseDialogProps{
   course: ICourseDetails
@@ -26,6 +26,7 @@ export default function UpdateCourseDialog(props:IUpdateCourseDialogProps) {
 
   //hooks
   const {successToast} = useToasts()
+  const {updateCourse} = useCourseAPI()
 
   //functions
   const handleClickOpen = () => {
@@ -37,23 +38,15 @@ export default function UpdateCourseDialog(props:IUpdateCourseDialogProps) {
   };
 
   const handleUpdate = async () => {
-    console.log("Bearer " + localStorage.getItem("token"));
     try {
       const payload = {
+        ...course,
         title,
         description,
         imageLink,
         price,
       };
-      const res = await axios.put(
-        `http://localhost:3001/admin/courses/${course?._id}`,
-         payload,
-        {
-          headers: {
-            Authorization: "Bearer " + localStorage.getItem("token"),
-          },
-        }
-      );
+      const res = await updateCourse(payload)
       successToast('Course updated!')
       console.log(res?.data);
       setOpen(false);

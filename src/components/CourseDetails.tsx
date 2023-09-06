@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import UpdateCourseDialog from "./dialogs/UpdateCourseDialog";
-import axios from "axios";
 import DeleteCourseDialog from "./dialogs/DeleteCourseDialog";
+import { useCourseAPI } from "../services/useCourseAPI";
 
 export interface ICourseDetails{
   _id: string
@@ -13,19 +13,18 @@ export interface ICourseDetails{
 }
 
 const CourseDetails = () => {
-  const { courseId } = useParams();
+  //states
   const [course, setCourse] = useState<ICourseDetails>();
 
+  //hooks
+  const { courseId } = useParams();
+  const { getCourseDetailsById} = useCourseAPI()
+  
+  //functions
   const getCourseByCourseId = async () => {
     try {
-      const res = await axios.get(
-        `http://localhost:3001/admin/course/${courseId} `,
-        {
-          headers: {
-            Authorization: "Bearer " + localStorage.getItem("token"),
-          },
-        }
-      );
+      if(!courseId)return;
+      const  res = await getCourseDetailsById(courseId)
       setCourse(res?.data?.course);
       console.log(res?.data?.course)
     } catch (err) {

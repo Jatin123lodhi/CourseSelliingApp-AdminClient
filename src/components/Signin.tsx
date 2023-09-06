@@ -2,45 +2,40 @@ import { useState } from "react";
 import Button from "@mui/material/Button";
 import { TextField } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import {  useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import { userState } from "../store/atoms/user";
-import axios from "axios"
 import { useToasts } from "../toasts/useToasts";
+import { useAuthAPI } from "../services/useAuthAPI";
 const Signin = () => {
-  
   //states
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const setUser = useSetRecoilState(userState)
+  const setUser = useSetRecoilState(userState);
 
   //hooks
   const navigate = useNavigate();
-  const {errorToast} = useToasts()
+  const { errorToast } = useToasts();
+  const {adminLogin} = useAuthAPI();
 
   //functions
+
   const handleSignin = async () => {
-    
     if (email?.trim()?.length === 0 || password?.trim()?.length === 0)
       return errorToast("Invalid email or password");
     console.log(email, password);
     try {
-      const res = await axios.post("http://localhost:3001/admin/login", {  
-      headers: {
-          email,
-          password
-        },
-      });
-    
-      localStorage.setItem("token", res?.data.token);        
+      
+      const res = await adminLogin(email,password);
+      localStorage.setItem("token", res?.data.token);
       console.log(res?.data);
-      setUser({isLoading:false,userEmail:email})
-       
-      navigate('/');
-    } catch(err) {
-      console.log(err)
-      errorToast('Invalid email or password')
+      setUser({ isLoading: false, userEmail: email });
+
+      navigate("/");
+    } catch (err) {
+      console.log(err);
+      errorToast("Invalid email or password");
     }
-  
+
     setEmail("");
     setPassword("");
   };

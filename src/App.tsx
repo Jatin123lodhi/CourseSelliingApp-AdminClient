@@ -13,7 +13,7 @@ import { userState } from "./store/atoms/user.ts";
 import axios from "axios";
 import { ToastContainer } from "react-toastify";
 import PrivateRoute from "./routes/PrivateRoute.tsx";
-
+import { headers } from "./services/useCourseAPI.tsx";
 function App() {
   return (
     <div>
@@ -25,10 +25,24 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/signin" element={<Signin />} />
-            
+
             {/* private routes */}
-            <Route path="/course/:courseId" element={<PrivateRoute><CourseDetails /></PrivateRoute>} />
-            <Route path="/courses" element={<PrivateRoute><Courses /></PrivateRoute>} />
+            <Route
+              path="/course/:courseId"
+              element={
+                <PrivateRoute>
+                  <CourseDetails />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/courses"
+              element={
+                <PrivateRoute>
+                  <Courses />
+                </PrivateRoute>
+              }
+            />
           </Routes>
           <ToastContainer />
         </Router>
@@ -44,10 +58,8 @@ const InitUser = () => {
   //function
   const init = async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/admin/me`, {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
+      const res = await axios.get(`${BASE_URL}/me`, {
+        headers,
       });
 
       if (res?.data?.email) {
